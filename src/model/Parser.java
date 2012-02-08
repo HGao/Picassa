@@ -122,7 +122,6 @@ public class Parser {
             myPossibleExpressions.put("min", new MinExpression());
             myPossibleExpressions.put("max", new MaxExpression());
             myPossibleExpressions.put("if", new IfExpression());
-            myPossibleExpressions.put("t", new TimeExpression());
 
         }
     }
