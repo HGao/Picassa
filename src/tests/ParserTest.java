@@ -48,20 +48,31 @@ public class ParserTest {
                 "(plus (plus 0.01 0.09) (plus 0.4 0.5))").evaluate();
         assertTrue(WHITE.equals(actual));
         actual = myParser.makeExpression(
-                "    (plus(plus 0.01 0.09)(plus 0.4 0.5   ))    ").evaluate();
+                "(plus (plus 0.01 0.09) (plus 0.4 0.5))").evaluate();
         assertTrue(WHITE.equals(actual));
         actual = myParser.makeExpression("(minus (div 1.8 2) (mul -10 0.01))")
                 .evaluate();
         assertTrue(WHITE.equals(actual));
-//        actual = myParser.makeExpression("(plus x (mod y (mul x .4)))")
-//                .evaluate();
-//        assertTrue(BLACK.equals(actual));
-        try {
-            myParser.makeExpression("(fooo 0.1 0.9)").evaluate();
-            fail("Exception should have been thrown");
-        } catch (ParserException e) {
-            // actually that's good
-            assertEquals(ParserException.Type.UNKNOWN_COMMAND, e.getType());
-        }
+        actual = myParser.makeExpression("(plus x (mod y (mul x .4)))")
+                .evaluate();
+        assertTrue(BLACK.equals(actual));
+    }
+    
+    @Test
+    public void testBasic() {
+        RGBColor actual = myParser.makeExpression("(neg -1)").evaluate();
+        assertTrue(WHITE.equals(actual));
+        actual = myParser.makeExpression(
+                "(exp 2 5)").evaluate();
+        assertTrue(WHITE.equals(actual));
+        actual = myParser.makeExpression(
+                "(mod 3 2)").evaluate();
+        assertTrue(WHITE.equals(actual));
+        actual = myParser.makeExpression("(color 1 1 1)")
+                .evaluate();
+        assertTrue(WHITE.equals(actual));
+        actual = myParser.makeExpression("(plus y (plus x 0.8))")
+                .evaluate();
+        assertTrue(WHITE.equals(actual));
     }
 }

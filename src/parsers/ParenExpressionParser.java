@@ -1,6 +1,8 @@
 package parsers;
 
 import java.util.ArrayList;
+import java.util.Map;
+import java.util.Stack;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -8,14 +10,16 @@ import model.*;
 
 public class ParenExpressionParser extends AbstractExpressionParser {
     private final Pattern EXPRESSION_BEGIN_REGEX = Pattern
-            .compile("\\(([a-zA-Z]+)");
+            .compile("\\(([a-z]+)");
 
     private int myPosition;
     private String input;
+    private static Map<String, Stack<Expression>> myLetExpressions;
 
     public Expression parse(String myInput, int myCurrentPosition, Parser ps) {
         myPosition = myCurrentPosition;
         input = myInput;
+        myLetExpressions = Parser.getLetExpressions();
 
         Matcher expMatcher = EXPRESSION_BEGIN_REGEX.matcher(myInput);
         expMatcher.find(myPosition);
@@ -23,19 +27,17 @@ public class ParenExpressionParser extends AbstractExpressionParser {
         myPosition = expMatcher.end();
 
         ArrayList<Expression> operands = new ArrayList<Expression>();
-        if (Parser.getPossibleExpressions().get(commandName) == null) {
-            throw new ParserException("Command " + commandName
-                    + " is not recognized!",
-                    ParserException.Type.UNKNOWN_COMMAND);
-        }
+        checkForErrors(myInput, commandName);
 
         while (true) {
             skipWhiteSpace();
             if (currentCharacter() == '(') {
-                operands.add(ps.makeExpression(getEmbeddedExpression()));
+                String exp = getEmbeddedExpression();
+                operands.add(ps.makeExpression(exp));
                 skipWhiteSpace();
             } else if (currentCharacter() != ')') {
-                operands.add(ps.makeExpression(currentWord()));
+                String exp = currentWord();
+                operands.add(ps.makeExpression(exp));
                 skipWhiteSpace();
             }
             if (currentCharacter() == ')') {
@@ -46,6 +48,18 @@ public class ParenExpressionParser extends AbstractExpressionParser {
                 myExp.setOperands(operands);
                 return myExp;
             }
+        }
+    }
+
+    private void checkForErrors(String myInput, String commandName) {
+        if (Parser.getPossibleExpressions().get(commandName) == null) {
+            throw new ParserException("Command " + commandName
+                    + " is not recognized!",
+                    ParserException.Type.UNKNOWN_COMMAND);
+        }
+        if (!isValidExpression(myInput)) {
+            throw new ParserException("Imbalanced parentheses!",
+                    ParserException.Type.BAD_SYNTAX);
         }
     }
 
@@ -64,7 +78,6 @@ public class ParenExpressionParser extends AbstractExpressionParser {
             ret = ret + currentCharacter();
             myPosition++;
         }
-        System.out.println(ret + " was the normal expression");
         return ret;
     }
 
@@ -91,20 +104,35 @@ public class ParenExpressionParser extends AbstractExpressionParser {
             ret = ret + currentCharacter();
             myPosition++;
         }
-        System.out.println(ret + " was the embedded expression");
         return ret;
     }
-
+    
     private boolean isValidExpression(String currentExpression)
-    {
+ {
         int leftParen = 0;
         int rightParen = 0;
-        
-        for (int i = 0; i < currentExpression.length(); i++)
-        {
-            if (currentExpression.charAt(i)==')') rightParen++;
-            if (currentExpression.charAt(i)=='(') leftParen++;
+
+        for (int i = 0; i < currentExpression.length(); i++) {
+            if (currentExpression.charAt(i) == ')')
+                rightParen++;
+            if (currentExpression.charAt(i) == '(')
+                leftParen++;
         }
         return (leftParen == rightParen);
     }
+
+    public static void addToMap(String letVariable, Expression letExpression) {
+        if (!myLetExpressions.containsKey(letVariable)) {
+            myLetExpressions.put(letVariable, new Stack<Expression>());
+        }
+        myLetExpressions.get(letVariable).push(letExpression);
+    }
+
+    public static void removeFromMap(String letVariable) {
+        myLetExpressions.get(letVariable).pop();
+        if (myLetExpressions.get(letVariable).size() == 0) {
+            myLetExpressions.remove(letVariable);
+        }
+    }
+    
 }

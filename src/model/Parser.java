@@ -20,6 +20,7 @@ public class Parser {
     private int myCurrentPosition;
     private String myInput;
     private static HashMap<String, Expression> myPossibleExpressions = new HashMap<String, Expression>();
+    private static HashMap<String, Stack<Expression>> myLetExpressions= new HashMap<String, Stack<Expression>>();
 
     private ParserClassifier pc = new ParserClassifier();
 
@@ -32,6 +33,11 @@ public class Parser {
      */
     public Expression makeExpression(String input) {
         myInput = input;
+        if (input.equals("")) {
+            throw new ParserException(
+                    "You need to provide an input!",
+                    ParserException.Type.BAD_SYNTAX);
+        }
         myCurrentPosition = 0; // NEW LINE
         Expression result = parse();
         skipWhiteSpace();
@@ -72,6 +78,10 @@ public class Parser {
         return myPossibleExpressions;
     }
 
+    public static Map<String, Stack<Expression>> getLetExpressions() {
+        return myLetExpressions;
+    }
+    
     public static void refreshExpressions() {
         {
             myPossibleExpressions.clear();
@@ -82,6 +92,13 @@ public class Parser {
             myPossibleExpressions.put("mod", new ModuloExpression());
             myPossibleExpressions.put("exp", new ExponentExpression());
             myPossibleExpressions.put("neg", new NegateExpression());
+            myPossibleExpressions.put("+", new AddExpression());
+            myPossibleExpressions.put("-", new SubtractExpression());
+            myPossibleExpressions.put("*", new MultiplyExpression());
+            myPossibleExpressions.put("/", new DivisionExpression());
+            myPossibleExpressions.put("%", new ModuloExpression());
+            myPossibleExpressions.put("^", new ExponentExpression());
+            myPossibleExpressions.put("!", new NegateExpression());
             myPossibleExpressions.put("color", new ColorExpression());
             myPossibleExpressions.put("random", new RandomExpression());
             myPossibleExpressions.put("floor", new FloorExpression());
@@ -99,6 +116,13 @@ public class Parser {
             myPossibleExpressions.put("perlinColor", new PerlinColorExpression());
             myPossibleExpressions.put("perlinBW", new PerlinBWExpression());
             myPossibleExpressions.put("let", new LetExpression());
+            myPossibleExpressions.put("sum", new SumExpression());
+            myPossibleExpressions.put("product", new ProductExpression());
+            myPossibleExpressions.put("average", new AverageExpression());
+            myPossibleExpressions.put("min", new MinExpression());
+            myPossibleExpressions.put("max", new MaxExpression());
+            myPossibleExpressions.put("if", new IfExpression());
+            myPossibleExpressions.put("t", new TimeExpression());
 
         }
     }

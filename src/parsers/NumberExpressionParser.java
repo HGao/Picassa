@@ -8,7 +8,7 @@ import model.*;
 
 public class NumberExpressionParser extends AbstractExpressionParser {
     private final Pattern DOUBLE_REGEX = Pattern
-            .compile("(\\-?[0-9]+(\\.[0-9]+)?)|(\\.[0-9]+)");
+            .compile("(\\-?[0-9]+(\\.[0-9]+)?)|(-?\\.[0-9]+)");
     private int myPosition;
 
     public Expression parse(String myInput, int myCurrentPosition, Parser ps) {

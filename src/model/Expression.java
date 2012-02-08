@@ -68,6 +68,14 @@ public abstract class Expression {
         myOperands = operands;
     }
 
+    public String getString() {
+        return myCommand;
+    }
+    
+    public RGBColor getValue() {
+        return myValue;
+    }
+    
     public ArrayList<Expression> getOperands() {
         return myOperands;
     }

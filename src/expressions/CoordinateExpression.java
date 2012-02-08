@@ -6,25 +6,26 @@ import model.RGBColor;
 import model.util.ColorCombinations;
 
 public class CoordinateExpression extends Expression {
-    private String myAxis;
+    private String myValue;
 
     public CoordinateExpression() {
         super();
     }
 
     public CoordinateExpression(String axis) {
-        myAxis = axis;
+        myValue = axis;
     }
 
     public RGBColor evaluate() {
-        if (myAxis.equals("x"))
+        if (myValue.equals("x"))
             return ColorCombinations.color(new RGBColor(Model.getEvalX()));
-        if (myAxis.equals("y"))
+        else if (myValue.equals("y"))
             return ColorCombinations.color(new RGBColor(Model.getEvalY()));
-        if (myAxis.equals("-x"))
+        else if (myValue.equals("-x"))
             return ColorCombinations.color(new RGBColor(-Model.getEvalX()));
-        else
-            // myAxis.equals("-y")
+        else if (myValue.equals("-y"))
             return ColorCombinations.color(new RGBColor(-Model.getEvalY()));
-    }
+        
+        return new RGBColor(0);
+    }    
 }

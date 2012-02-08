@@ -8,16 +8,16 @@ package model;
 @SuppressWarnings("serial")
 public class ParserException extends RuntimeException {
     public static enum Type {
-        BAD_SYNTAX, EXTRA_CHARACTERS, UNKNOWN_COMMAND
+        BAD_SYNTAX, EXTRA_CHARACTERS, UNKNOWN_COMMAND, INCORRECT_OPERANDS
     };
 
     private Type myType;
 
     /**
-     * Create exception with given meesage
+     * Create exception with given message
      * 
      * @param message
-     *            explaination of problem
+     *            explanation of problem
      */
     public ParserException(String message) {
         this(message, Type.BAD_SYNTAX);
